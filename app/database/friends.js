@@ -1,36 +1,68 @@
 import connection from './connection';
 import faker from 'faker';
 
-const friendScores = [];
 const friends = [];
-const scores = [];
 
 const friendsQuery = `INSERT INTO friends (friend_name, avatar) VALUES ?`;
 const friendIdQuery = `SELECT MAX(id) as maxId FROM friends`;
 
 const scoresQuery = `INSERT INTO scores (friend_id, question_num, answer_num) VALUES ?`;
 
+const joinQuery = `SELECT * FROM friends INNER JOIN scores ON friends.id = scores.friend_id`;
+
 const friendsValues = [];
 const scoresValues = [];
 
 // Random friend paramenters
+const randomScores = [];
 const randomName = `${faker.name.firstName()} ${faker.name.lastName()}`;
-
 const randomAvatar = faker.image.avatar();
+const generateRandomScores = function() {
+  const randomScore = function() {
+    return Math.floor(Math.random() * 5) + 1;
+  };
+  for (let i = 0; i < 10; i++) {
+    randomScores.push(randomScore());
+  }
+  return randomScores;
+};
 
-const randomScore = function() {
-  return Math.floor(Math.random() * 5) + 1;
+//Get values from two tables
+const getValues = function() {
+  const addedFriend = {};
+  connection.query(joinQuery, (err, result) => {
+    if (err) {
+      throw err;
+    }
+    result.forEach(item => {
+      const {
+        id,
+        friend_name,
+        avatar,
+        friend_id,
+        question_num,
+        answer_num
+      } = item;
+      Object.assign(addedFriend, {
+        name: friend_name,
+        avatar: avatar
+      });
+      addedFriend[question_num] = answer_num;
+    });
+    friends.push(addedFriend);
+    console.log(friends);
+  });
 };
 
 //Create new friend data
-const newFriend = function(name, avatar) {
+const newFriend = function(name, avatar, scores) {
   //Create new friend
   friendsValues.push([name, avatar]);
   connection.query(friendsQuery, [friendsValues], (err, result) => {
     if (err) {
       throw err;
     }
-    console.log(result.affectedRows);
+    console.log('friend row:', result.affectedRows);
   });
   //Get friend's id
   connection.query(friendIdQuery, (err, result) => {
@@ -41,58 +73,17 @@ const newFriend = function(name, avatar) {
 
     //Generate  10 question_num and answer_num values associated with last added friend's id
     for (let i = 1; i <= 10; i++) {
-      scoresValues.push([maxId, i, friendScores[i] || randomScore()]);
+      scoresValues.push([maxId, i, scores[i - 1]]);
     }
     connection.query(scoresQuery, [scoresValues], (err, result) => {
       if (err) {
         throw err;
       }
-      console.log(result.affectedRows);
+      console.log('scores rows:', result.affectedRows);
+      getValues();
     });
   });
 };
 
 //Run this function to create a new random friend
-//newFriend(randomName, randomAvatar);
-
-const joinFriendsQuery = `SELECT id, friend_name, avatar FROM friends INNER JOIN scores on friends.id = scores.friend_id GROUP BY friends.id;`;
-
-const joinScoresQuery = `SELECT friend_id, question_num, answer_num from scores INNER JOIN friends on scores.friend_id = friends.id`;
-
-const joinQuery = `SELECT * FROM friends INNER JOIN scores on friends.id = scores.friend_id`;
-
-// connection.query(joinQuery, (err, result) => {
-//   result.forEach(item => {
-//     console.log(item.question_num);
-//     console.log(item.answer_num);
-//   });
-// });
-
-// connection.query(joinScoresQuery, (err, result) => {
-//   if (err) {
-//     throw err;
-//   }
-//   result.forEach(item => {
-//     const { friend_id, question_num, answer_num } = item;
-//     console.log('id:', friend_id);
-//     console.log('question_num:', question_num);
-//     console.log('answer_num:', answer_num);
-//   });
-// });
-
-// connection.query(joinFriendsQuery, (err, result) => {
-//   if (err) {
-//     throw err;
-//   }
-//   result.forEach((item, index) => {
-//     const { friend_name, avatar } = item;
-//     const newFriend = {
-//       name: friend_name,
-//       avatar: avatar
-//     };
-//     friends.push(newFriend);
-//     if (result.length === index + 1) {
-//       return friends;
-//     }
-//   });
-// });
+newFriend(randomName, randomAvatar, generateRandomScores());
