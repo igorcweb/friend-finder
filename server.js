@@ -1,20 +1,20 @@
 import express from 'express';
-import path from 'path';
-import friends from './app/data/friends';
-
 const app = express();
+import path from 'path';
 const PORT = process.env.PORT || 3000;
+import hbs from 'express-handlebars';
 
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname + '/app/public/home.html'));
-});
+app.set('views', path.join(__dirname, 'app/views'));
+app.engine('handlebars', hbs());
+app.set('view engine', 'handlebars');
+app.use(express.static(__dirname + 'app/public'));
 
-app.get('/survey', (req, res) => {
-  res.sendFile(path.join(__dirname + '/app/public/survey.html'));
-});
+import htmlRoutes from './app/routes/htmlRoutes';
+import apiRoutes from './app/routes/apiRoutes';
+
+app.use('/', htmlRoutes);
+app.use('/api', apiRoutes);
 
 app.listen(PORT, () => {
-  console.log(`FriendFinder is running on localhost:${PORT}`);
+  console.log(`Friend Finder is listening on PORT ${PORT}`);
 });
-
-console.log(friends);
