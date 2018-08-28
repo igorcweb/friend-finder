@@ -4,7 +4,7 @@ import path from 'path';
 import exphbs from 'express-handlebars';
 const PORT = process.env.PORT || 8080;
 
-app.set('views', path.join(__dirname, '/views'));
+app.set('views', path.join(__dirname + '/views'));
 app.set('view engine', 'handlebars');
 app.engine('handlebars', exphbs({ defaultLayout: 'main' }));
 
