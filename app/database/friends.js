@@ -1,18 +1,6 @@
 import connection from './connection';
 import faker from 'faker';
 
-const friends = [];
-
-const friendsQuery = `INSERT INTO friends (friend_name, avatar) VALUES ?`;
-const friendIdQuery = `SELECT MAX(id) as maxId FROM friends`;
-
-const scoresQuery = `INSERT INTO scores (friend_id, question_num, answer_num) VALUES ?`;
-
-const joinQuery = `SELECT * FROM friends INNER JOIN scores ON friends.id = scores.friend_id`;
-
-const friendsValues = [];
-const scoresValues = [];
-
 // Random friend paramenters
 const randomScores = [];
 const randomName = `${faker.name.firstName()} ${faker.name.lastName()}`;
@@ -27,63 +15,44 @@ const generateRandomScores = function() {
   return randomScores;
 };
 
-//Get values from two tables
-const getValues = function() {
-  const addedFriend = {};
-  connection.query(joinQuery, (err, result) => {
+const addFriendQuery = `INSERT INTO friends (friend_name, avatar, scores) VALUES ?`;
+
+const values = [];
+const createFriend = function(name, avatar, scores) {
+  console.log('hello');
+  let scoresStr = scores.join('');
+  values.push([name, avatar, scoresStr]);
+  connection.query(addFriendQuery, [values], (err, result) => {
     if (err) {
       throw err;
     }
-    result.forEach(item => {
-      const {
-        id,
-        friend_name,
-        avatar,
-        friend_id,
-        question_num,
-        answer_num
-      } = item;
-      Object.assign(addedFriend, {
-        name: friend_name,
-        avatar: avatar
-      });
-      addedFriend[question_num] = answer_num;
-    });
-    friends.push(addedFriend);
-    console.log(friends);
+    console.log(result.affectedRows);
   });
 };
 
-//Create new friend data
-const newFriend = function(name, avatar, scores) {
-  //Create new friend
-  friendsValues.push([name, avatar]);
-  connection.query(friendsQuery, [friendsValues], (err, result) => {
-    if (err) {
-      throw err;
-    }
-    console.log('friend row:', result.affectedRows);
-  });
-  //Get friend's id
-  connection.query(friendIdQuery, (err, result) => {
-    if (err) {
-      throw err;
-    }
-    let maxId = result[0].maxId;
+const getFriensQuery = `SELECT friend_name, avatar, scores FROM friends`;
 
-    //Generate  10 question_num and answer_num values associated with last added friend's id
-    for (let i = 1; i <= 10; i++) {
-      scoresValues.push([maxId, i, scores[i - 1]]);
+export const getFriends = function(req, res) {
+  const friends = [];
+  connection.query(getFriensQuery, (err, result) => {
+    if (err) {
+      throw err;
     }
-    connection.query(scoresQuery, [scoresValues], (err, result) => {
-      if (err) {
-        throw err;
-      }
-      console.log('scores rows:', result.affectedRows);
-      getValues();
+    result.forEach(friend => {
+      const { friend_name, avatar, scores } = friend;
+      const addedFriend = Object.assign(
+        {},
+        {
+          name: friend_name,
+          avatar,
+          scores: scores.split('')
+        }
+      );
+      friends.push(addedFriend);
     });
+    res.json(friends);
   });
 };
 
-//Run this function to create a new random friend
-newFriend(randomName, randomAvatar, generateRandomScores());
+//Run this function to create a random friend
+// createFriend(randomName, randomAvatar, generateRandomScores());

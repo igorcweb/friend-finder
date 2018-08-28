@@ -1,9 +1,9 @@
 import express from 'express';
 const router = express.Router();
-import friends from '../database/friends';
+import { getFriends } from '../database/friends';
 
 router.get('/friends', (req, res) => {
-  res.json(friends);
+  getFriends(req, res);
 });
 
 export default router;

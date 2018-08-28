@@ -1,7 +1,7 @@
 import express from 'express';
 const app = express();
 import path from 'path';
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8080;
 import hbs from 'express-handlebars';
 
 app.set('views', path.join(__dirname, 'app/views'));
