@@ -1,1 +1,31 @@
-<h2>Survey</h2>
+<div class="container">
+  <h2 class="survey mt-3 pb-3">Survey Questions</h2>
+  <h3 class="mt-3">About You</h3>
+  <form>
+    <div class="form-group">
+      <label for="name">Name (Required)</label>
+      <input type="text" class="form-control" id="name" name="name">
+    </div>
+    <div class="form-group photo pb-4">
+      <label for="photo">Link to Photo Image</label>
+      <input type="text" class="form-control" id="photo">
+    </div>
+    {{#each questions}}
+    <div class="question">
+      <h3>Question {{num}}</h3>
+      <h4>{{question}}</h4>
+      <div class="options input-group input-small mb-3">
+        <select class="custom-select" id="q{{num}}">
+          <option value="1">1 <span class="option"><span>(Strongly Disagree)</span></span></option>1
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5 <span class="option">(Strongly Agree)</span></option>
+        </select>
+      </div>
+      {{/each}}
+      <button type="submit" id="submit" class="btn btn-lg btn-primary btn-block mb-4">Submit</button>
+      <hr>
+    </div>
+  </form>
+</div>

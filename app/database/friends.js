@@ -15,10 +15,9 @@ const generateRandomScores = function() {
   return randomScores;
 };
 
-const addFriendQuery = `INSERT INTO friends (friend_name, avatar, scores) VALUES ?`;
-
-const values = [];
 const createFriend = function(name, avatar, scores) {
+  const addFriendQuery = `INSERT INTO friends (friend_name, avatar, scores) VALUES ?`;
+  const values = [];
   console.log('hello');
   let scoresStr = scores.join('');
   values.push([name, avatar, scoresStr]);
@@ -30,9 +29,8 @@ const createFriend = function(name, avatar, scores) {
   });
 };
 
-const getFriensQuery = `SELECT friend_name, avatar, scores FROM friends`;
-
 export const getFriends = function(req, res) {
+  const getFriensQuery = `SELECT friend_name, avatar, scores FROM friends`;
   const friends = [];
   connection.query(getFriensQuery, (err, result) => {
     if (err) {
@@ -54,5 +52,5 @@ export const getFriends = function(req, res) {
   });
 };
 
-//Run this function to create a random friend
-// createFriend(randomName, randomAvatar, generateRandomScores());
+// Run this function to create a new random friend
+//createFriend(randomName, randomAvatar, generateRandomScores());
