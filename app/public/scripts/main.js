@@ -27,7 +27,7 @@ const bestMatch = function(userScores, friends) {
     results.push(difference);
   });
 
-  //smallest number in the array
+  //smallest number in the results array
   let smallest = Math.min.apply(Math, results);
   let matchIndex = results.indexOf(smallest);
   const match = friends[matchIndex];
