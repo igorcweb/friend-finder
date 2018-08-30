@@ -2,9 +2,10 @@ import connection from './connection';
 import faker from 'faker';
 
 // Random friend paramenters
-const randomScores = [];
+
 const randomName = `${faker.name.firstName()} ${faker.name.lastName()}`;
 const randomAvatar = faker.image.avatar();
+const randomScores = [];
 const generateRandomScores = function() {
   const randomScore = function() {
     return Math.floor(Math.random() * 5) + 1;
@@ -15,10 +16,9 @@ const generateRandomScores = function() {
   return randomScores;
 };
 
-const createFriend = function(name, avatar, scores) {
+export const addFriend = function(name, avatar, scores) {
   const addFriendQuery = `INSERT INTO friends (friend_name, avatar, scores) VALUES ?`;
   const values = [];
-  console.log('hello');
   let scoresStr = scores.join('');
   values.push([name, avatar, scoresStr]);
   connection.query(addFriendQuery, [values], (err, result) => {
@@ -30,9 +30,9 @@ const createFriend = function(name, avatar, scores) {
 };
 
 export const getFriends = function(req, res) {
-  const getFriensQuery = `SELECT friend_name, avatar, scores FROM friends`;
+  const getFriendsQuery = `SELECT friend_name, avatar, scores FROM friends`;
   const friends = [];
-  connection.query(getFriensQuery, (err, result) => {
+  connection.query(getFriendsQuery, (err, result) => {
     if (err) {
       throw err;
     }
@@ -52,5 +52,5 @@ export const getFriends = function(req, res) {
   });
 };
 
-// Run this function to create a new random friend
-//createFriend(randomName, randomAvatar, generateRandomScores());
+// Run this function to add a new random friend to database and API
+// addFriend(randomName, randomAvatar, generateRandomScores());
