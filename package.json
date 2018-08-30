@@ -4,7 +4,7 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "start": "nodemon server.js --exec babel-node --presets env"
+    "start": "nodemon server --exec babel-node --presets env"
   },
   "author": "Igor Chernyshev",
   "license": "ISC",
@@ -23,6 +23,6 @@
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.3",
     "babel-preset-env": "^1.7.0",
-    "nodemon": "^1.18.3"
+    "nodemon": "^1.18.4"
   }
 }
