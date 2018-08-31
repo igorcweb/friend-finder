@@ -34,20 +34,37 @@ const bestMatch = function(userScores, friends) {
   console.log('match: ', match);
 };
 
-axios
-  .get('/api/friends')
-  .then(response => {
-    friendsApi = response.data;
-    let user = friendsApi[friendsApi.length - 1];
-    userScores = user.scores.map(num => {
-      return parseInt(num);
+const getBestMatch = function() {
+  axios
+    .get('/api/friends')
+    .then(response => {
+      friendsApi = response.data;
+      let user = friendsApi[friendsApi.length - 1];
+      userScores = user.scores.map(num => {
+        return parseInt(num);
+      });
+      //removing the last friend from the API array
+      friendsApi.splice(-1, 1);
+      console.log('friends: ', friendsApi);
+      console.log('user:', user);
+      bestMatch(userScores, friendsApi);
+    })
+    .catch(err => {
+      console.log(err);
     });
-    //removing the last friend from the API array
-    friendsApi.splice(-1, 1);
-    console.log('friends: ', friendsApi);
-    console.log('user:', user);
-    bestMatch(userScores, friendsApi);
-  })
-  .catch(err => {
-    console.log(err);
-  });
+};
+
+// $('#submit').on('reload', () => {
+//   setTimeout(() => {
+//     getBestMatch();
+//   }, 1000);
+// });
+
+// axios
+//   .get('/api/friends')
+//   .then(result => {
+//     console.log(result.data);
+//   })
+//   .catch(err => {
+//     console.log('Err:', err);
+//   });

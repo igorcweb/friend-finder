@@ -5,6 +5,8 @@ router.get('/', (req, res) => {
   res.render('home');
 });
 
+let matched = false;
+
 const questions = [
   {
     num: 1,
@@ -55,7 +57,8 @@ const questions = [
 ];
 
 router.get('/survey', (req, res) => {
-  res.render('survey', { questions });
+  res.render('survey', { questions, matched: matched });
+  matched = true;
 });
 
 export default router;

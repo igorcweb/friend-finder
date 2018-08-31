@@ -1,16 +1,76 @@
 import express from 'express';
 const router = express.Router();
+import axios from 'axios';
 import { addFriend, getFriends } from '../database/friends';
+
+const bestMatch = function(userScores, friends) {
+  const results = [];
+  //iterating over friends API
+  friends.forEach((friend, index) => {
+    //converting scores into numbers
+    friend.scores = friend.scores.map(num => {
+      return parseInt(num);
+    });
+    //calculating the difference between corresponing answers
+    let difference = [];
+    userScores.forEach((num, index) => {
+      difference.push(num - friend.scores[index]);
+    });
+    //converting negative numbers into positive
+    difference = difference
+      .map(num => {
+        if (num < 0) {
+          return num * -1;
+        }
+        return num;
+      })
+      //calculating compatibility score by adding the numbers together (the smallest number wins)
+      .reduce((acc, num) => {
+        return acc + num;
+      });
+
+    results.push(difference);
+  });
+
+  //smallest number in the results array
+  let smallest = Math.min.apply(Math, results);
+  let matchIndex = results.indexOf(smallest);
+  const match = friends[matchIndex];
+  console.log('match: ', match);
+};
 
 router.get('/friends', (req, res) => {
   getFriends(req, res);
 });
 
 router.post('/friends', (req, res) => {
-  const { name, avatar, scores } = req.body;
+  let { name, avatar, scores } = req.body;
+
+  const user = { name, avatar, scores };
   if (scores.includes('unanswered')) {
     console.log('Please answer all of the questions');
   }
+  addFriend(name, avatar, scores);
+  // Get Best Match
+  const rootUrl = req.protocol + '://' + req.get('host');
+  axios
+    .get(rootUrl + '/api/friends')
+    .then(response => {
+      const friendsApi = response.data;
+      scores = scores.map(num => {
+        return parseInt(num);
+      });
+      console.log(scores);
+      //removing the last added friend (user) from the API array
+      friendsApi.splice(-1, 1);
+      console.log('friends: ', friendsApi);
+      console.log('user:', user);
+      bestMatch(scores, friendsApi);
+    })
+    .catch(err => {
+      console.log(err);
+    });
+  res.redirect('/survey');
 });
 
 export default router;

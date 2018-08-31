@@ -17,6 +17,9 @@ const generateRandomScores = function() {
 };
 
 export const addFriend = function(name, avatar, scores) {
+  if (!avatar) {
+    avatar = 'http://www.bsmc.net.au/wp-content/uploads/No-image-available.jpg';
+  }
   const addFriendQuery = `INSERT INTO friends (friend_name, avatar, scores) VALUES ?`;
   const values = [];
   let scoresStr = scores.join('');
@@ -48,7 +51,7 @@ export const getFriends = function(req, res) {
       );
       friends.push(addedFriend);
     });
-    res.json(friends);
+    return res.json(friends);
   });
 };
 
