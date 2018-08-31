@@ -2,6 +2,7 @@ import express from 'express';
 const router = express.Router();
 import axios from 'axios';
 import { addFriend, getFriends } from '../database/friends';
+import { questions } from './htmlRoutes';
 
 const bestMatch = function(userScores, friends) {
   const results = [];
@@ -28,13 +29,14 @@ const bestMatch = function(userScores, friends) {
       .reduce((acc, num) => {
         return acc + num;
       });
-
     results.push(difference);
   });
 
   //smallest number in the results array
   let smallest = Math.min.apply(Math, results);
+  //index of the friend with the smallest score
   let matchIndex = results.indexOf(smallest);
+  //match
   const match = friends[matchIndex];
   console.log('match: ', match);
 };
@@ -45,7 +47,6 @@ router.get('/friends', (req, res) => {
 
 router.post('/friends', (req, res) => {
   let { name, avatar, scores } = req.body;
-
   const user = { name, avatar, scores };
   if (scores.includes('unanswered')) {
     console.log('Please answer all of the questions');
@@ -60,17 +61,15 @@ router.post('/friends', (req, res) => {
       scores = scores.map(num => {
         return parseInt(num);
       });
-      console.log(scores);
       //removing the last added friend (user) from the API array
       friendsApi.splice(-1, 1);
-      console.log('friends: ', friendsApi);
       console.log('user:', user);
       bestMatch(scores, friendsApi);
     })
     .catch(err => {
       console.log(err);
     });
-  res.redirect('/survey');
+  res.render('survey', { questions, matched: true });
 });
 
 export default router;
