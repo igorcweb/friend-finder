@@ -1,6 +1,8 @@
 import express from 'express';
 const router = express.Router();
 
+let matched = false;
+
 router.get('/', (req, res) => {
   res.render('home');
 });
@@ -55,7 +57,11 @@ export const questions = [
 ];
 
 router.get('/survey', (req, res) => {
-  res.render('survey', { questions, matched: false });
+  res.render('survey', {
+    questions,
+    matched: matched,
+    error: req.flash('error')
+  });
 });
 
 export default router;

@@ -1,5 +1,32 @@
-{{!-- Modal Styles --}}
 <style>
+  h2.survey,
+  .photo {
+    border-bottom: 1px solid #eee;
+  }
+
+  h3 {
+    font-weight: 600;
+    font-size: 1.7rem;
+  }
+
+  label {
+    font-size: 1.3rem;
+    font-weight: 500;
+  }
+
+  h4 {
+    font-size: 1.3rem;
+  }
+
+  .options {
+    width: 200px;
+  }
+
+  footer {
+    font-size: 0.9rem;
+    margin-left: 0.5rem;
+  }
+
   .myModal {
     position: fixed;
     z-index: 1;
@@ -14,15 +41,30 @@
   .my-modal-content {
     background-color: #f4f4f4;
     margin: 150px auto;
-    padding: 20px;
-    width: 380px;
+    width: 340px;
     box-shadow: 0 5px 8px 0 rgba(0, 0, 0, 0.2), 0 7px 20px 0 rgba(0, 0, 0, 0.17);
     animation-name: modalopen;
     animation-duration: 1s;
   }
 
+  .my-modal-header h3 {
+    margin: 0;
+  }
+
+  .my-modal-header {
+    background: #346A86;
+    padding: 15px;
+    color: #fff;
+  }
+
+  .my-modal-body {
+    background-color: #f4f4f4;
+    padding: 10px 20px;
+  }
+
   .myCloseBtn {
-    color: #ccc;
+    line-height: 30px;
+    color: #fff;
     float: right;
     font-size: 30px;
   }
@@ -32,6 +74,13 @@
     color: #000;
     text-decoration: none;
     cursor: pointer;
+  }
+
+  img.avatar {
+    display: block;
+    margin: 0 auto;
+    width: 250px;
+    margin-bottom: 30px;
   }
 
   @keyframes modalopen {
@@ -49,14 +98,21 @@
   <!-- Modal -->
   <div id="mySimpleModal" class="myModal">
     <div class="my-modal-content">
-      <span class="myCloseBtn">&times;</span>
-      <p>Your best match is:</p>
-      <h3>{{match.name}}</h3>
-      <img src="{{match.avatar}}" alt="">
+      <div class="my-modal-header">
+        <span class="myCloseBtn">&times;</span>
+        <h3 class="text-center">Your best match is:</h3>
+      </div>
+      <div class="my-modal-body">
+        <h2 class="text-center mb-3">{{match.name}}</h2>
+        <img class="avatar" src="{{match.avatar}}" alt="">
+      </div>
     </div>
   </div>
   {{/if}}
   <h2 class="survey mt-3 pb-3">Survey Questions</h2>
+  {{#if error}}
+  <div class="alert">{{error}}</div>
+  {{/if}}
   <h3 class="mt-3">About You</h3>
   <form method="POST" action="/api/friends" id="form">
     <div class="form-group">
@@ -73,7 +129,7 @@
       <h4>{{question}}</h4>
       <div class="options input-group input-small mb-3">
         <select name="scores" class="custom-select" id="q{{num}}">
-          <option value="unanswered">Select an Option</option>
+          <option value="*unanswered*">Select an Option</option>
           <option value="1">1 (Strongly Disagree)</option>
           <option value="2">2</option>
           <option value="3">3</option>

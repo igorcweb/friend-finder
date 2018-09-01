@@ -3,6 +3,8 @@ const router = express.Router();
 import axios from 'axios';
 import { addFriend, getFriends } from '../database/friends';
 import { questions } from './htmlRoutes';
+import Joi from 'joi';
+import schema from '../joySchema';
 
 const bestMatch = function(userScores, friends) {
   const results = [];
@@ -49,28 +51,32 @@ router.get('/friends', (req, res) => {
 router.post('/friends', (req, res) => {
   let { name, avatar, scores } = req.body;
   const user = { name, avatar, scores };
-  if (scores.includes('unanswered')) {
-    console.log('Please answer all of the questions');
-  }
-  addFriend(name, avatar, scores);
-  // Get Best Match
-  const rootUrl = req.protocol + '://' + req.get('host');
-  axios
-    .get(rootUrl + '/api/friends')
-    .then(response => {
-      const friendsApi = response.data;
-      scores = scores.map(num => {
-        return parseInt(num);
-      });
-      //removing the last added friend (user) from the API array
-      friendsApi.splice(-1, 1);
-      console.log('user:', user);
-      let match = bestMatch(scores, friendsApi);
-      res.render('survey', { questions, matched: true, match });
-    })
-    .catch(err => {
-      console.log(err);
-    });
+  Joi.validate({ name, scores }, schema, err => {
+    if (!err) {
+      addFriend(name, avatar, scores);
+      // Get Best Match
+      const rootUrl = req.protocol + '://' + req.get('host');
+      axios
+        .get(rootUrl + '/api/friends')
+        .then(response => {
+          const friendsApi = response.data;
+          scores = scores.map(num => {
+            return parseInt(num);
+          });
+          //removing the last added friend (user) from the API array
+          friendsApi.splice(-1, 1);
+          console.log('user:', user);
+          let match = bestMatch(scores, friendsApi);
+          res.render('survey', { questions, matched: true, match });
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    } else {
+      req.flash('error', err.message);
+      res.redirect('/survey');
+    }
+  });
 });
 
 export default router;

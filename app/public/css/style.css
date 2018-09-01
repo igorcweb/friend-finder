@@ -31,7 +31,16 @@ footer {
   margin-left: 0.5rem;
 }
 
-/* Modal */
-.myModal {
-  display: none;
+.alert {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 1px solid transparent;
+  border-radius: 4px;
+  color: #a94442;
+  background-color: #f2dede;
+  border-color: #ebccd1;
+  margin-top: 20px;
+  padding: 10px 30px;
+  text-align: center;
 }
