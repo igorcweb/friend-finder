@@ -55,5 +55,6 @@ export const getFriends = function(req, res) {
   });
 };
 
-// Run this function to add a new random friend to database and API
+// Run this function to add a new random friend to database and API.  After you finished adding friends, please comment it out otherwise the app will not work properly.
+
 // addFriend(randomName, randomAvatar, generateRandomScores());

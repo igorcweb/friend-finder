@@ -39,6 +39,7 @@ const bestMatch = function(userScores, friends) {
   //match
   const match = friends[matchIndex];
   console.log('match: ', match);
+  return match;
 };
 
 router.get('/friends', (req, res) => {
@@ -64,12 +65,12 @@ router.post('/friends', (req, res) => {
       //removing the last added friend (user) from the API array
       friendsApi.splice(-1, 1);
       console.log('user:', user);
-      bestMatch(scores, friendsApi);
+      let match = bestMatch(scores, friendsApi);
+      res.render('survey', { questions, matched: true, match });
     })
     .catch(err => {
       console.log(err);
     });
-  res.render('survey', { questions, matched: true });
 });
 
 export default router;

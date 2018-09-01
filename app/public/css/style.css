@@ -30,3 +30,8 @@ footer {
   font-size: 0.9rem;
   margin-left: 0.5rem;
 }
+
+/* Modal */
+.myModal {
+  display: none;
+}
