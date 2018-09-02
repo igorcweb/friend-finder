@@ -10,7 +10,14 @@ const dbConfig = {
   database: 'friend_finder'
 };
 
-const connection = mysql.createConnection(dbConfig);
+let connection;
+
+// Heroku config
+if (process.env.JAWSDB_URL) {
+  connection = mysql.createConnection(process.env.JAWSDB_URL);
+} else {
+  connection = mysql.createConnection(dbConfig);
+}
 
 connection.connect(err => {
   if (err) {
