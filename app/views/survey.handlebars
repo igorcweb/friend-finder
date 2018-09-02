@@ -152,6 +152,7 @@
   myCloseBtn.addEventListener('click', closeModal)
   function closeModal() {
     myModal.style.display = 'none';
+    window.location.href = '/survey';
   }
   function closeModal() {
     myModal.style.display = 'none';
@@ -161,8 +162,8 @@
   function clickOutside(e) {
     if (e.target === myModal) {
       myModal.style.display = 'none';
+      window.location.href = '/survey';
     }
-
   }
 
 </script>
