@@ -1,10 +1,13 @@
 const myModal = document.getElementById('mySimpleModal');
 
 const myCloseBtn = document.getElementsByClassName('myCloseBtn')[0];
-myCloseBtn.addEventListener('click', closeModal);
-function closeModal() {
-  myModal.style.display = 'none';
+if (myCloseBtn) {
+  myCloseBtn.addEventListener('click', closeModal);
+  function closeModal() {
+    myModal.style.display = 'none';
+  }
 }
+
 function closeModal() {
   myModal.style.display = 'none';
   window.location.href = '/survey';
